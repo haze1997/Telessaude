@@ -1,4 +1,4 @@
-const APP_ID = '03d88d8127774ffa84eb99855ea22f0d'
+const APP_ID = 'AGORA_IO_APP_ID'
 const CHANNEL = sessionStorage.getItem('sala')
 const TOKEN = sessionStorage.getItem('token')
 let UID = Number(sessionStorage.getItem('UID'))
