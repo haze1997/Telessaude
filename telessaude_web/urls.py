@@ -1,5 +1,3 @@
-from multiprocessing.managers import view_types
-
 """projeto URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
