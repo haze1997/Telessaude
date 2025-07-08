@@ -80,8 +80,8 @@ def consultas(request):
     return render(request, 'consultas.html', data)
 
 def getToken(request):
-    appId = '03d88d8127774ffa84eb99855ea22f0d'
-    appCertificate = 'cc8eaf8869384b5da7b2fdcdb201b0e3'
+    appId = 'AGORA_IO_APP_ID'
+    appCertificate = 'AGORA_IO_APP_CERTIFICATE'
     channelName = request.GET.get('id_consulta')
     uid = request.user.id
     #username = request.user.username
