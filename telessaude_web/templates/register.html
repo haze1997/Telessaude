@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block titulo %}Cadastro{% endblock %}
+{% block conteudo %}
+<div class="container-fluid"><div class="col"><div class="card shadow mb-4"><div class="card-header d-flex justify-content-between align-items-center"><h6 class="text-primary fw-bold m-0">Cadastro</h6><div class="dropdown no-arrow"><button class="btn btn-link btn-sm dropdown-toggle" aria-expanded="false" data-bs-toggle="dropdown" type="button"><i class="fas fa-ellipsis-v text-gray-400"></i></button><div class="dropdown-menu shadow dropdown-menu-end animated--fade-in">
+    <p class="text-center dropdown-header">dropdown header:</p><a class="dropdown-item" href="#">&nbsp;Action</a><a class="dropdown-item" href="#">&nbsp;Another action</a><div class="dropdown-divider"></div><a class="dropdown-item" href="#">&nbsp;Something else here</a></div></div></div><div class="card-body"><div class="p-5"><div class="text-center"><h4 class="text-dark mb-4">Crie uma conta!</h4></div><form class="user" action="/register/" method="POST">{% csrf_token %}{{ form|crispy }}
+<button class="btn btn-primary d-block btn-user w-auto" type="submit">Registrar-se</button><hr></form><div class="text-center"><a class="small" href="/recover_password/">Esqueceu sua senha?</a></div><div class="text-center"><a class="small" href="/login/">Já tem uma conta? Login!</a></div></div></div></div></div>
+{% endblock %}

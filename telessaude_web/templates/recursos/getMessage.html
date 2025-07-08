@@ -1,0 +1,9 @@
+<div style="height: 150px;" class="overflow-y-auto border p-2" id="scroll-box">
+{% for mensagem in mensagensChat %}
+<div class="text-sm font-light py-1 ml-10">
+                        <span class="text-black">{{ mensagem.conteudo }}</span>
+                        {% if mensagem.anexo %}<span class="text-black"> | Anexo: <a href="{{ mensagem.anexo.url }}" download>{{ mensagem.anexo.name }}</a></span>{% endif %}
+                        <span class="text-gray-800">@{{ mensagem.autor }}</span>
+</div>
+{% endfor %}
+</div>

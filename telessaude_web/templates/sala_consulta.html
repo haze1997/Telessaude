@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block titulo %}Consulta{% endblock %}
+{% block conteudo %}
+<div class="container-fluid"><h3 class="text-dark mb-4" id="nome_consulta">Consulta nº {{ ver.id }}</h3><div class="row mb-3"><div class="col-lg-4" id="video-streams"><p class="text-center"><i class="fa fa-spinner fa-spin loading" id="carregando"></i></p></div><div class="col-lg-8"><div class="row mb-3 d-none"><div class="col"><div class="card text-white bg-primary shadow"><div class="card-body"><div class="row mb-2"><div class="col"><p class="m-0">Peformance</p><p class="m-0"><strong>65.2%</strong></p></div><div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div></div><p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month</p></div></div></div><div class="col"><div class="card text-white bg-success shadow"><div class="card-body"><div class="row mb-2"><div class="col"><p class="m-0">Peformance</p><p class="m-0"><strong>65.2%</strong></p></div><div class="col-auto"><i class="fas fa-rocket fa-2x"></i></div></div><p class="text-white-50 small m-0"><i class="fas fa-arrow-up"></i>&nbsp;5% since last month</p></div></div></div></div><div class="row"><div class="col"><div class="card shadow mb-3"><div class="card-header py-3"><p class="text-primary m-0 fw-bold">Informações da Consulta</p></div><div class="card-body"><form method="POST">{% csrf_token %}<input type="hidden" name="form_id" value="form_consulta">{{ consultaForm|crispy }}<div class="mb-3">
+{% if user.role == 'profissional' %}<button class="btn btn-primary btn-sm" type="submit">Salvar alterações</button>{% endif %}</div></form></div></div><div class="card shadow"><div class="card-header py-3"><p class="text-primary m-0 fw-bold">Informações do paciente</p></div><div class="card-body"><form method="post" >{% csrf_token %}<input type="hidden" name="form_id" value="form_paciente">{{ pacienteDetalhes|crispy }}<div class="mb-3">{% if user.role == 'profissional' %}<button class="btn btn-primary btn-sm" type="submit">Salvar alterações</button>{% endif %}</div></form></div></div></div></div></div></div><div class="card shadow mb-5"><div class="card-header py-3"><p class="text-primary m-0 fw-bold">Chat</p></div><div class="card-body"><div class="row"><div class="col-md-6" hx-get="/get_msg/{{ ver.id }}" hx-target="#mensagens" hx-trigger="every 2s"><div id="mensagens"></div><label class="form-label" for="mensagem"><strong>Participe da Consulta</strong></label><form id="mensagemform" hx-post="/enviarmsg/{{ ver.id }}/"   method="post" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'  enctype="multipart/form-data" >{% csrf_token %}{{ messageForm|crispy }}<div class="mb-3"></div><div class="mb-3"></div><div class="mb-3">
+<button class="btn btn-primary btn-sm" id="enviarmensagem" type="submit">Enviar mensagem</button></div></form></div></div></div></div>
+<script type="text/javascript" src="{% static 'js/AgoraRTC_N-4.23.4.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/stream.js' %}"></script>
+<script type="text/javascript">
+
+/*
+        function enviarmsg() {
+              var serializedData = $(this).serializeArray();
+              serializedData.push({ name: "id_consulta", value: `{{ ver.id }}` });
+              //make POST ajax call
+              $.ajax({
+                  method:'POST',
+                  url: "/enviarmsg/",
+                  data: serializedData,
+                  //return false if ajax is successful
+                  // you can also do something with response data if needed
+                  success: function(data) {
+                    $("#id_conteudo").trigger('reset');
+                    return false;},
+                  //return false if ajax request returns error
+                  error: function(data) {return false;},
+              })
+          }*/
+/*
+$('#mensagemform').on('submit', function(event) {
+  event.preventDefault();
+  $.ajax({
+    url: '/enviarmsg/',
+    type: 'GET',
+    data: $(this).serialize() + '&id_consulta=' + `{{ ver.id }}`,
+    success: function(data) {
+      console.log(data);
+    }
+  });
+});
+*/
+document.addEventListener('DOMContentLoaded', function() {
+
+  async function fetchDados() {
+    let sala = `{{ ver.id }}`;
+
+    let resposta = await fetch(`/get_token/?id_consulta=${sala}`)
+    let dados = await resposta.json()
+    let UID = dados.uid
+    let token = dados.token
+
+    sessionStorage.setItem('UID', UID)
+    sessionStorage.setItem('token', token)
+    sessionStorage.setItem('sala', sala)
+
+    token = sessionStorage.getItem('token')
+    UID = Number(sessionStorage.getItem('UID'))
+
+    if (token != null && UID != null){
+      await joinAndDisplayLocalStream()
+      const carregando = document.getElementById('carregando');
+      if (carregando) {
+          carregando.remove();
+      }
+    }
+
+
+  }
+
+  fetchDados();
+  htmx.process(htmx.find('#mensagemform'))
+});
+</script>
+{% endblock %}

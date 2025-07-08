@@ -1,0 +1,10 @@
+{% load static %}<nav class="navbar align-items-start sidebar sidebar-dark accordion bg-gradient-primary p-0 navbar-dark"><div class="container-fluid d-flex flex-column p-0"><a class="navbar-brand d-flex justify-content-center align-items-center sidebar-brand m-0" href="#"><div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-laugh-wink"></i></div><div class="sidebar-brand-text mx-3"><span>Telessaúde</span></div></a><hr class="sidebar-divider my-0"><ul class="navbar-nav text-light" id="accordionSidebar">
+    <li class="nav-item"><a class="nav-link {% if request.resolver_match.view_name == 'home' %}active{% else %}{% endif %}" href="/"><i class="fas fa-tachometer-alt"></i><span>Início</span></a></li>
+    {% if user.is_authenticated %}
+    <li class="nav-item"><a class="nav-link {% if request.resolver_match.view_name == 'perfil' %}active{% else %}{% endif %}" href="/profile/"><i class="fas fa-user"></i><span>Perfil</span></a></li>
+    <li class="nav-item"><a class="nav-link {% if request.resolver_match.view_name == 'consultas' %}active{% else %}{% endif %}" href="/consultas/"><i class="fas fa-table"></i><span>Consultas</span></a></li>
+    {% else %}
+    <li class="nav-item"><a class="nav-link {% if request.resolver_match.view_name == 'login' %}active{% else %}{% endif %}" href="/login/"><i class="far fa-user-circle"></i><span>Login</span></a></li>
+    <li class="nav-item"><a class="nav-link {% if request.resolver_match.view_name == 'cadastro' %}active{% else %}{% endif %}" href="/register/"><i class="fas fa-user-circle"></i><span>Cadastro</span></a></li>
+    {% endif %}
+</ul><div class="text-center d-none d-md-inline"><button class="btn rounded-circle border-0" id="sidebarToggle" type="button"></button></div></div></nav>

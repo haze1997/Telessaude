@@ -1,0 +1,10 @@
+.video_stream div{
+    position: unset !important;
+}
+
+
+
+.loading{
+    font-size: 100px;
+    display: inline-block;
+}
