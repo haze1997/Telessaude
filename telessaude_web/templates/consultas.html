@@ -3,7 +3,7 @@
 {% load crispy_forms_tags %}
 {% block titulo %}Consultas{% endblock %}
 {% block conteudo %}
-<div class="container-fluid"><h3 class="text-dark mb-4">Consultas</h3><div class="card shadow"><div class="card-header py-3"><p class="text-primary m-0 fw-bold">{% if user.is_authenticated and user.role == 'secretaria' %}Todas as consultas{% else %}Suas consultas{% endif %}</p></div><div class="card-body"><div class="row"><div class="col-md text-nowrap text-end">{% if user.is_authenticated and user.role == 'secretaria' %}<a href="#" id="agendar" class="btn btn-primary">Agendar nova consulta</a>{% endif %}
+<div class="container-fluid"><h3 class="text-dark mb-4">Consultas</h3><div class="card shadow mb-5"><div class="card-header py-3"><p class="text-primary m-0 fw-bold">{% if user.is_authenticated and user.role == 'secretaria' %}Todas as consultas{% else %}Suas consultas{% endif %}</p></div><div class="card-body"><div class="row"><div class="col-md text-nowrap text-end">{% if user.is_authenticated and user.role == 'secretaria' %}<a href="#" id="agendar" class="btn btn-primary">Agendar nova consulta</a>{% endif %}
 </div></div><div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info"><table class="table my-0" id="dataTable">
     {% if user.is_authenticated %}
     {% if consultas is not null %}
