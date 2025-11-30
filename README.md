@@ -1,2 +1,2 @@
 # Telessaude
-Um website de Telessaúde feito com o framework Django
+Website de Atendimento em Telessaúde feito utilizando o framework Django
