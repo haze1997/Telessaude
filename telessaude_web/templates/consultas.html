@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block titulo %}Consultas{% endblock %}
+{% block conteudo %}
+<div class="container-fluid"><h3 class="text-dark mb-4">Consultas</h3><div class="card shadow"><div class="card-header py-3"><p class="text-primary m-0 fw-bold">{% if user.is_authenticated and user.role == 'secretaria' %}Todas as consultas{% else %}Suas consultas{% endif %}</p></div><div class="card-body"><div class="row"><div class="col-md text-nowrap text-end">{% if user.is_authenticated and user.role == 'secretaria' %}<a href="#" id="agendar" class="btn btn-primary">Agendar nova consulta</a>{% endif %}
+</div></div><div class="table-responsive table mt-2" id="dataTable" role="grid" aria-describedby="dataTable_info"><table class="table my-0" id="dataTable">
+    {% if user.is_authenticated %}
+    {% if consultas is not null %}
+    {% if user.role == 'paciente' %}
+    <thead><tr><th>Nº</th><th>Profissional</th><th>Cargo</th><th>Assunto</th><th>Data</th><th>Preço</th><th>Ação</th></tr></thead><tbody>
+    {% for consulta in consultasPgObj.object_list %}
+    <tr>
+        <th scope="row">{{consulta.id}}</th>
+        <td>{{consulta.profissional.user.nome}}</td>
+        <td>{{consulta.profissional.tipo}}</td>
+        <td>{{consulta.motivo}}</td>
+        <td>{{consulta.data_hora}}</td>
+        <td>R$ {{consulta.preco}}</td>
+        <td>
+            <a href="#" id="{{consulta.id}}" class="btn btn-dark ver">Visualizar</a>
+        </td>
+    </tr>
+    {% empty %}
+    <span>Você ainda não tem consultas!</span>
+    {% endfor %}
+    </tbody><tfoot><tr><td><strong>Nº</strong></td><td><strong>Profissional</strong></td><td><strong>Cargo</strong></td><td><strong>Assunto</strong></td><td><strong>Data</strong></td><td><strong>Preço</strong></td><td><strong>Ação</strong></td></tr></tfoot>
+    {% elif user.role == 'profissional' %}
+    <thead><tr><th>Nº</th><th>Paciente</th><th>Genero</th><th>Assunto</th><th>Data</th><th>Preço</th><th>Ação</th></tr></thead><tbody>
+    {% for consulta in consultasPgObj.object_list %}
+    <tr>
+        <th scope="row">{{consulta.id}}</th>
+        <td>{{consulta.paciente.user.nome}}</td>
+        <td>{% if consulta.paciente.user.genero == 'm' %}Masculino{% else %}Feminino{% endif %}</td>
+        <td>{{consulta.motivo}}</td>
+        <td>{{consulta.data_hora}}</td>
+        <td>R$ {{consulta.preco}}</td>
+        <td>
+            <a href="#" id="{{consulta.id}}" class="btn btn-dark ver">Visualizar</a>
+        </td>
+    </tr>
+    {% empty %}
+    <span>Você ainda não tem consultas!</span>
+    {% endfor %}
+    </tbody><tfoot><tr><td><strong>Nº</strong></td><td><strong>Paciente</strong></td><td><strong>Genero</strong></td><td><strong>Assunto</strong></td><td><strong>Data</strong></td><td><strong>Preço</strong></td><td><strong>Ação</strong></td></tr></tfoot>
+    {% elif user.role == 'secretaria' %}
+    <thead><tr><th>Nº</th><th>Paciente</th><th>Profissional</th><th>Assunto</th><th>Data</th><th>Preço</th><th>Ação</th></tr></thead><tbody>
+    {% for consulta in consultasPgObj.object_list %}
+    <tr>
+        <th scope="row">{{consulta.id}}</th>
+        <td>{{consulta.paciente.user.nome}}</td>
+        <td>{{consulta.profissional.user.nome}}</td>
+        <td>{{consulta.motivo}}</td>
+        <td>{{consulta.data_hora}}</td>
+        <td>R$ {{consulta.preco}}</td>
+        <td>
+            <a href="#" id="reagendar-{{consulta.id}}" class="btn btn-dark reagendar">Reagendar</a>
+            <a href="{% url 'deletarconsulta' consulta.id %}" id="deletar-{{consulta.id}}" onclick="return confirm('Tem certeza que deseja deletar esta consulta?');" class="btn btn-danger deletar">Deletar</a>
+        </td>
+    </tr>
+    {% empty %}
+    <span>Não existem consultas!</span>
+    {% endfor %}
+    </tbody><tfoot><tr><td><strong>Nº</strong></td><td><strong>Paciente</strong></td><td><strong>Profissional</strong></td><td><strong>Assunto</strong></td><td><strong>Data</strong></td><td><strong>Preço</strong></td><td><strong>Ação</strong></td></tr></tfoot>
+    {% else  %}
+    <span>Nada para mostrar aqui!</span>
+    {% endif  %}
+    {% else  %}
+    <span>Não há consultas para mostrar!</span>
+    {% endif  %}
+    {% else  %}
+    <span>Nada para mostrar aqui!!</span>
+    {% endif  %}
+</table></div>
+<div class="row"><div class="col-md-6 align-self-center"><p id="dataTable_info" class="dataTables_info" role="status" aria-live="polite">Mostrando 5 consultas por página</p></div><div class="col-md-6">{% if consultas is not null %}<nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers"><ul class="pagination">
+    {%if consultasPgObj.has_previous %}<li class="page-item"><a class="page-link" aria-label="Previous" href="?pg={{consultasPgObj.previous_page_number}}"><span aria-hidden="true">«</span></a></li>{% else %}<li class="page-item disabled"><a class="page-link" aria-label="Previous" href="#"><span aria-hidden="true">«</span></a></li>{% endif %}<li class="page-item active"><a class="page-link" href="#">{{consultasPgObj.number}}</a></li>{%if consultasPgObj.has_next %}<li class="page-item"><a class="page-link" aria-label="Next" href="?pg={{consultasPgObj.next_page_number}}"><span aria-hidden="true">»</span></a></li>{% endif %}</ul></nav>{% endif %}
+    </div>
+    </div></div></div>
+{% if user.is_authenticated and user.role == 'secretaria' %}
+<!-- Modal Reagendar -->
+<div class="modal fade" id="modalReagendar" tabindex="-1" aria-labelledby="ModalLabelReagendar" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ModalLabelReagendar">Escolha uma nova data para a consulta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="fecharReagendar()"></button>
+        </div>
+        <form method="post">
+        <div class="modal-body">
+            <div class="form-wrapper">
+                {% csrf_token %}<input type="hidden" name="form_id" value="form_reagendar"><input type="hidden" name="form_id_consulta" value="0">{{ formReagendar|crispy }}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="fecharReagendar()">Fechar</button>
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Adicionar Consulta -->
+<div class="modal fade" id="modalAgendar" tabindex="-1" aria-labelledby="ModalLabelAgendar" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h1 class="modal-title fs-5" id="ModalLabelAgendar">Preencha os dados da nova consulta</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="fecharAgendar()"></button>
+        </div>
+        <form method="post">
+        <div class="modal-body">
+            <div class="form-wrapper">
+                {% csrf_token %}<input type="hidden" name="form_id" value="form_agendar">{{ formAgendar|crispy }}
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="fecharAgendar()">Fechar</button>
+            <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+        </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+<script type="text/javascript">
+function abrirReagendar(){
+    $('#modalReagendar').modal('show');
+}
+function fecharReagendar(){
+    $('#modalReagendar').modal('hide');
+}
+
+function abrirAgendar(){
+    $('#modalAgendar').modal('show');
+}
+function fecharAgendar(){
+    $('#modalAgendar').modal('hide');
+}
+
+$(document).ready(function(){
+        $(".ver").click(function(e) {
+          handleClick(e);
+        });
+        $(".reagendar").click(function(e) {
+          handleReagendar(e);
+          abrirReagendar();
+        });
+        $("#agendar").click(function() {
+          abrirAgendar();
+        });
+
+});
+
+
+async function handleReagendar(event) {
+  // Previne o comportamento padrão do link
+  event.preventDefault();
+  let idReagendar = event.target.id.split('-').pop();
+  $("input[name='form_id_consulta']").val(idReagendar);
+
+}
+
+async function handleClick(event) {
+  // Previne o comportamento padrão do link
+  event.preventDefault();
+  let sala = event.target.id;
+  let resposta = await fetch(`/get_token/?id_consulta=${sala}`)
+  let dados = await resposta.json()
+  let UID = dados.uid
+  let token = dados.token
+
+  sessionStorage.setItem('UID', UID)
+  sessionStorage.setItem('token', token)
+  sessionStorage.setItem('sala', sala)
+
+
+  // Opcional: redirecionar após alguma ação
+  window.location.href = `/sala/${event.target.id}`;
+};
+
+/*
+
+document.addEventListener('DOMContentLoaded', function() {
+const visualizar_link = document.querySelector('.ver');
+if(visualizar_link){
+  visualizar_link.addEventListener('click', handleClick);
+}
+});
+
+async function handleClick(event) {
+  // Previne o comportamento padrão do link
+  event.preventDefault();
+  let sala = event.target.id;
+  let resposta = await fetch(`/get_token/?id_consulta=${sala}`)
+  let dados = await resposta.json()
+  let UID = dados.uid
+  let token = dados.token
+
+  sessionStorage.setItem('UID', UID)
+  sessionStorage.setItem('token', token)
+  sessionStorage.setItem('sala', sala)
+
+
+  // Opcional: redirecionar após alguma ação
+  window.location.href = `/sala/${event.target.id}`;
+};
+
+*/
+</script>
+{% endblock %}
